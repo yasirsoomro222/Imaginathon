@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusGuard AI - Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        </div>
+        <div>
+          <h1>CampusGuard</h1>
+          <span>AI Admin Portal</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#dashboard" class="nav-link active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Dashboard
+        </a>
+        <a href="#alerts" class="nav-link" data-tab="alerts">
+          <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          Live Alerts
+          <span class="badge" id="navAlertCount">0</span>
+        </a>
+        <a href="#cameras" class="nav-link" data-tab="cameras">
+          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+          Cameras
+        </a>
+        <a href="#students" class="nav-link" data-tab="students">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Students
+        </a>
+        <a href="#chalans" class="nav-link" data-tab="chalans">
+          <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+          Chalans
+        </a>
+        <a href="#settings" class="nav-link" data-tab="settings">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L3.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          Settings
+        </a>
+      </nav>
+
+      <div class="admin-user">
+        <div class="avatar">A</div>
+        <div>
+          <p>Admin User</p>
+          <span>Campus Security</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" id="refreshBtn" title="Refresh data">
+            <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4A8 8 0 0 0 4 12c0 4.42 3.58 8 8 8 3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18a6 6 0 0 1-6-6 6 6 0 0 1 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            Refresh
+          </button>
+          <span class="status-pill online">
+            <span class="dot"></span> System Online
+          </span>
+        </div>
+      </header>
+
+      <section class="tab-content active" id="dashboard">
+        <div class="stats-grid">
+          <div class="stat-card red">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            </div>
+            <div>
+              <p class="stat-value" id="dashAlerts">0</p>
+              <p class="stat-label">Active Alerts</p>
+            </div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            </div>
+            <div>
+              <p class="stat-value" id="dashWarnings">0</p>
+              <p class="stat-label">Warnings Sent</p>
+            </div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+            </div>
+            <div>
+              <p class="stat-value" id="dashChalans">0</p>
+              <p class="stat-label">Chalans Issued</p>
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <div>
+              <p class="stat-value" id="dashStudents">0</p>
+              <p class="stat-label">Students</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-row">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Recent Alerts</h3>
+              <a href="#alerts" class="link" data-tab="alerts">View all</a>
+            </div>
+            <div class="alert-list" id="recentAlerts">
+              <div class="empty-state">No recent alerts</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Camera Status</h3>
+            </div>
+            <div class="camera-status-list" id="cameraStatusList">
+              <div class="empty-state">Loading cameras...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="alerts">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Live Alerts</h3>
+            <div class="filters">
+              <button class="btn btn-ghost btn-sm" onclick="loadAlerts()">Refresh</button>
+            </div>
+          </div>
+          <div class="alert-grid" id="alertsGrid">
+            <div class="empty-state">No active alerts</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="cameras">
+        <div class="camera-grid">
+          <div class="panel camera-panel">
+            <div class="panel-header">
+              <h3>Classroom Camera</h3>
+              <span class="status-pill online"><span class="dot"></span> Live</span>
+            </div>
+            <div class="video-wrap">
+              <img src="http://127.0.0.1:8000/video_feed?camera=classroom" alt="Classroom" />
+            </div>
+          </div>
+          <div class="panel camera-panel">
+            <div class="panel-header">
+              <h3>Cafeteria Camera</h3>
+              <span class="status-pill online"><span class="dot"></span> Live</span>
+            </div>
+            <div class="video-wrap">
+              <img src="http://127.0.0.1:8000/video_feed?camera=cafeteria" alt="Cafeteria" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="students">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Students</h3>
+            <button class="btn btn-primary" onclick="openStudentModal()">+ Add Student</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Roll No</th>
+                  <th>Department</th>
+                  <th>Email</th>
+                  <th>Warnings</th>
+                  <th>Chalans</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <tr><td colspan="7" class="empty-cell">Loading students...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="chalans">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Warnings & Chalans</h3>
+          </div>
+          <div class="tabs-sub">
+            <button class="sub-tab active" data-subtab="warningsList">Warnings</button>
+            <button class="sub-tab" data-subtab="chalansList">Chalans</button>
+          </div>
+          <div class="sub-content active" id="warningsList">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Camera</th>
+                    <th>Message</th>
+                    <th>Email</th>
+                    <th>Portal</th>
+                  </tr>
+                </thead>
+                <tbody id="warningsTableBody">
+                  <tr><td colspan="6" class="empty-cell">No warnings</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="sub-content" id="chalansList">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Amount</th>
+                    <th>Reason</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Sent</th>
+                  </tr>
+                </thead>
+                <tbody id="chalansTableBody">
+                  <tr><td colspan="7" class="empty-cell">No chalans</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="settings">
+        <div class="panel settings-panel">
+          <div class="panel-header">
+            <h3>Email Configuration</h3>
+          </div>
+          <p class="settings-note">
+            Email sending is configured via environment variables or by editing
+            <code>Backend/notifications.py</code>. Set these values before running the backend:
+          </p>
+          <div class="code-block">
+            SMTP_HOST=smtp.gmail.com<br>
+            SMTP_PORT=587<br>
+            SMTP_USER=your-email@gmail.com<br>
+            SMTP_PASS=your-app-password<br>
+            FROM_EMAIL=your-email@gmail.com<br>
+            UNIVERSITY_NAME=Air Uni
+          </div>
+          <p class="settings-note">
+            For Gmail, use an <strong>App Password</strong> instead of your regular password.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Action Modal -->
+  <div class="modal" id="actionModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="actionModalTitle">Send Warning</h3>
+        <button class="modal-close" id="actionCloseBtn" onclick="closeActionModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="actionAlertId" />
+        <input type="hidden" id="actionCamera" />
+        <input type="hidden" id="actionType" />
+
+        <label>Student</label>
+        <select id="actionStudent" class="input"></select>
+
+        <label>Reason</label>
+        <input type="text" id="actionReason" class="input" />
+
+        <label>Send Via</label>
+        <div class="checkbox-group">
+          <label class="checkbox">
+            <input type="checkbox" id="sendPortal" checked />
+            <span>Portal Notification</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" id="sendEmail" />
+            <span>Email</span>
+          </label>
+        </div>
+
+        <p class="action-evidence-note" id="actionEvidenceNote" hidden>
+          This manual action will be sent without a detection-image attachment.
+        </p>
+        <div class="action-delivery-status" id="actionDeliveryStatus" role="status" aria-live="polite" hidden></div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="actionCancelBtn" onclick="closeActionModal()">Cancel</button>
+          <button class="btn btn-primary" id="actionConfirmBtn" onclick="confirmAction()">Send Warning</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Modal -->
+  <div class="modal" id="studentModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Student</h3>
+        <button class="modal-close" onclick="closeStudentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>Full Name</label>
+        <input type="text" id="studentName" class="input" placeholder="e.g. Ali Khan" />
+
+        <label>Roll Number</label>
+        <input type="text" id="studentRoll" class="input" placeholder="e.g. 234023" />
+
+        <label>Department</label>
+        <input type="text" id="studentDept" class="input" placeholder="e.g. Software Engineering" />
+
+        <label>Email</label>
+        <input type="email" id="studentEmail" class="input" placeholder="e.g. ali@airuni.edu.pk" />
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeStudentModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
