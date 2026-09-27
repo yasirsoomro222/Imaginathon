@@ -1,0 +1,125 @@
+{% extends "admin/_layout.html" %}
+{% from "_macros.html" import att_badge, challan_status_badge, warning_severity_badge %}
+
+{% block page_title %}{{ student.roll_no }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ student.user.full_name }}</h4>
+        <p class="text-muted mb-0">{{ student.roll_no }} · {{ student.program }} · Semester {{ student.semester }} · {{ student.user.email }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.student_edit', student_id=student.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+        <form method="post" action="{{ url_for('admin.student_reset_password', student_id=student.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-warning"><i class="bi bi-key me-1"></i>Reset Password</button>
+        </form>
+        <form method="post" action="{{ url_for('admin.student_toggle_active', student_id=student.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if student.user.is_active %}
+            <button class="btn btn-outline-danger"><i class="bi bi-person-x me-1"></i>Deactivate</button>
+            {% else %}
+            <button class="btn btn-outline-success"><i class="bi bi-person-check me-1"></i>Activate</button>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Overall Attendance</div>
+                <div class="fs-3 fw-bold">{{ student.attendance_percentage if student.attendance_percentage is not none else '—' }}{% if student.attendance_percentage is not none %}%{% endif %}</div>
+                {{ att_badge(student.attendance_percentage) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">CGPA</div>
+                <div class="fs-3 fw-bold">{{ student.cgpa if student.cgpa is not none else '—' }}</div>
+                <div class="text-muted small">{{ student.finalized_results|length }} finalized course(s)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Unpaid / Total Challans</div>
+                <div class="fs-3 fw-bold">{{ student.unpaid_challans|length }} / {{ student.challans|length }}</div>
+                <div class="text-muted small">{{ student.challans|selectattr('is_overdue')|list|length }} overdue</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-journals me-2"></i>Enrolled Courses</div>
+            <div class="list-group list-group-flush">
+                {% for e in student.enrollments %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-semibold">{{ e.course.code }}</span>
+                        <span class="text-muted small">· {{ e.course.title }}</span>
+                    </div>
+                    {{ att_badge(e.attendance_percentage) }}
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">No enrollments.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-exclamation-triangle me-2"></i>Warnings</span>
+                <a href="{{ url_for('admin.warning_new', student_id=student.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-plus-lg"></i> Issue Warning</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for w in student.warnings[:6] %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-semibold">{{ w.title|truncate(40) }}</span>
+                        <div class="small text-muted">{{ w.created_at|datetimefmt }}</div>
+                    </div>
+                    <div class="d-flex gap-1">
+                        {{ warning_severity_badge(w) }}
+                        {% if not w.is_read %}<span class="badge bg-danger">Unread</span>{% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">No warnings.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-receipt me-2"></i>Fee Challans</span>
+                <a href="{{ url_for('admin.challan_new', student_id=student.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg"></i> Issue Challan</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for c in student.challans[:6] %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-semibold">{{ c.challan_no }}</span>
+                        <span class="text-muted small">· {{ c.fee_type }} · {{ c.amount|money }}</span>
+                        <div class="small text-muted">Due {{ c.due_date|datefmt }}</div>
+                    </div>
+                    {{ challan_status_badge(c) }}
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">No challans.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Enter Marks — {{ assessment.title }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ assessment.title }}</h2>
+        <p class="text-muted mb-0">{{ assessment.course.code }} — {{ assessment.type|title }} — Total Marks: {{ assessment.total_marks }} — Weightage: {{ assessment.weightage }}%</p>
+    </div>
+    <a href="{{ url_for('teacher.assessments', course_id=assessment.course.id) }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Student Name</th>
+                            <th>Marks (out of {{ assessment.total_marks }})</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in enrollments %}
+                        {% set mark = existing.get(e.student_id) %}
+                        <tr>
+                            <td><strong>{{ e.student.roll_no }}</strong></td>
+                            <td>{{ e.student.user.full_name }}</td>
+                            <td>
+                                <input type="number" name="marks_{{ e.student_id }}" class="form-control form-control-sm" min="0" max="{{ assessment.total_marks }}" step="0.5" value="{{ mark.obtained_marks if mark else '' }}" style="max-width: 150px;">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if enrollments %}
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Save Marks</button>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">No students enrolled.</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

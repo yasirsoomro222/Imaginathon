@@ -1,0 +1,71 @@
+{% extends "student/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}{{ enrollment.course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ enrollment.course.code }} — {{ enrollment.course.title }}</h4>
+        <p class="text-muted mb-0">
+            <i class="bi bi-person me-1"></i>{{ enrollment.course.teacher }} ·
+            {{ enrollment.course.credit_hours }} credit hours · Semester {{ enrollment.course.semester }}
+        </p>
+    </div>
+    {{ att_badge(enrollment.attendance_percentage) }}
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-file-earmark-text me-2"></i>Assignments</div>
+            <div class="list-group list-group-flush">
+                {% for a in enrollment.course.assignments|sort(attribute='due_date') %}
+                {% set sub = (current_user.student.submissions | selectattr('assignment_id', 'equalto', a.id) | list | first) %}
+                <a href="{{ url_for('student.assignment_detail', assignment_id=a.id) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>{{ a.title }}</span>
+                        {% if sub and sub.is_graded %}
+                        <span class="badge bg-success">Graded</span>
+                        {% elif sub %}
+                        <span class="badge bg-info">Submitted</span>
+                        {% elif a.is_past_due %}
+                        <span class="badge bg-danger">Overdue</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </div>
+                    <div class="small text-muted">Due {{ a.due_date|datetimefmt }}</div>
+                </a>
+                {% else %}
+                <div class="list-group-item text-muted">No assignments posted.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-clipboard-data me-2"></i>Assessments</div>
+            <div class="list-group list-group-flush">
+                {% for a in enrollment.course.assessments %}
+                {% set mark = (current_user.student.marks | selectattr('assessment_id', 'equalto', a.id) | list | first) %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-semibold">{{ a.title }}</span>
+                        <span class="badge bg-light text-dark ms-2">{{ a.type }}</span>
+                    </div>
+                    {% if mark %}
+                    <span>{{ mark.obtained_marks|int }} / {{ a.total_marks }}</span>
+                    {% else %}
+                    <span class="text-muted small">Not graded</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">No assessments defined.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

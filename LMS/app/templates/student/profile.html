@@ -1,0 +1,60 @@
+{% extends "student/_layout.html" %}
+
+{% block page_title %}Profile{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">My Profile</h4>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="post" action="{{ url_for('student.profile') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input class="form-control" value="{{ current_user.full_name }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" value="{{ current_user.email }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Roll No</label>
+                            <input class="form-control" value="{{ student.roll_no }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Program</label>
+                            <input class="form-control" value="{{ student.program }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Semester</label>
+                            <input class="form-control" value="{{ student.semester }}" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input class="form-control" name="phone" value="{{ student.phone or '' }}" placeholder="03xx-xxxxxxx">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                <h5 class="mt-2 mb-0">{{ current_user.full_name }}</h5>
+                <p class="text-muted mb-3">{{ student.roll_no }}</p>
+                <div class="small text-muted">
+                    <div><i class="bi bi-journals me-1"></i>{{ student.enrollments|length }} enrolled course(s)</div>
+                    <div class="mt-1"><i class="bi bi-award me-1"></i>CGPA: {{ student.cgpa if student.cgpa is not none else '—' }}</div>
+                    <div class="mt-1"><i class="bi bi-calendar-check me-1"></i>Attendance: {{ student.attendance_percentage if student.attendance_percentage is not none else '—' }}{% if student.attendance_percentage is not none %}%{% endif %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

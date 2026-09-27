@@ -1,0 +1,56 @@
+{% extends "student/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}Attendance{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-1">Attendance Record</h4>
+<p class="text-muted">Minimum 75% attendance per course is required to sit in the final exam.</p>
+
+{% set overall = student_attendance if student_attendance is defined else current_user.student.attendance_percentage %}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <div class="text-muted small">Overall Attendance (all courses)</div>
+            <div class="fs-2 fw-bold">{{ overall if overall is not none else '—' }}{% if overall is not none %}%{% endif %}</div>
+        </div>
+        {{ att_badge(overall) }}
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Course</th>
+                    <th>Title</th>
+                    <th>Classes</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in enrollments %}
+                {% set records = e.attendance_records %}
+                {% set counted = records | rejectattr('status', 'equalto', 'excused') | list %}
+                {% set present = counted | selectattr('status', 'in', ['present', 'late']) | list %}
+                {% set absent = counted | rejectattr('status', 'in', ['present', 'late']) | list %}
+                <tr>
+                    <td class="fw-semibold">{{ e.course.code }}</td>
+                    <td>{{ e.course.title }}</td>
+                    <td>{{ counted|length }}</td>
+                    <td>{{ present|length }}</td>
+                    <td>{{ absent|length }}</td>
+                    <td>{{ att_badge(e.attendance_percentage) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-muted">No enrollment records.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

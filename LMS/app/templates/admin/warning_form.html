@@ -1,0 +1,81 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Issue Warning{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Issue Warning</h4>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Warning Type <span class="text-danger">*</span></label>
+                    <select class="form-select" name="type" required>
+                        <option value="attendance">Attendance</option>
+                        <option value="fee">Fee</option>
+                        <option value="disciplinary">Disciplinary</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Severity <span class="text-danger">*</span></label>
+                    <select class="form-select" name="severity" required>
+                        <option value="info">Info</option>
+                        <option value="warning" selected>Warning</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Related Fee Challan (fee warnings only)</label>
+                    <select class="form-select" name="related_challan_id">
+                        <option value="">— None —</option>
+                        {% for c in challans %}
+                        <option value="{{ c.id }}">{{ c.challan_no }} · {{ c.student.roll_no }} · {{ c.amount|money }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">Links the warning to the challan so the student can jump straight to it.</div>
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                    <input class="form-control" name="title" maxlength="150" required placeholder="Outstanding tuition fee — Fall 2026">
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Message <span class="text-danger">*</span></label>
+                    <textarea class="form-control" name="message" rows="5" required placeholder="Dear student, your tuition fee for Fall 2026 is overdue…"></textarea>
+                </div>
+                <div class="col-12 mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <label class="form-label mb-0">Select Student(s) <span class="text-danger">*</span></label>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleAll(this)">
+                            <label class="form-check-label small" for="selectAll">Select all (bulk)</label>
+                        </div>
+                    </div>
+                    <div class="border rounded p-2" style="max-height: 320px; overflow-y: auto;">
+                        {% for s in students %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="student_ids" value="{{ s.id }}" id="ws{{ s.id }}"
+                                   {% if selected_id and s.id == selected_id %}checked{% endif %}>
+                            <label class="form-check-label" for="ws{{ s.id }}">
+                                <span class="fw-semibold">{{ s.roll_no }}</span>
+                                <span class="text-muted small">· {{ s.user.full_name }} · Semester {{ s.semester }}</span>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-text">Each selected student receives the warning in-app plus an email notification.</div>
+                </div>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-exclamation-triangle me-1"></i>Issue Warning(s) &amp; Notify</button>
+            <a href="{{ url_for('admin.warnings') }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleAll(source) {
+        document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = source.checked);
+    }
+</script>
+{% endblock %}

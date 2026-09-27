@@ -1,0 +1,41 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Grade Submission{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Grade Submission</h4>
+
+<div class="card border-0 shadow-sm" style="max-width: 640px;">
+    <div class="card-body">
+        <div class="mb-3">
+            <span class="fw-semibold">{{ submission.student.roll_no }}</span> — {{ submission.student.user.full_name }}
+        </div>
+        <div class="mb-3">
+            <div class="text-muted small">Assignment</div>
+            <div>{{ submission.assignment.title }} ({{ submission.assignment.course.code }}) · max {{ submission.assignment.total_marks }} marks</div>
+        </div>
+        <div class="mb-3">
+            <div class="text-muted small">Submitted File</div>
+            <a href="{{ url_for('admin.download_submission', submission_id=submission.id) }}">
+                <i class="bi bi-file-earmark me-1"></i>{{ submission.original_filename }}
+            </a>
+            <span class="text-muted small">· {{ submission.submitted_at|datetimefmt }}</span>
+        </div>
+        <hr>
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label class="form-label">Marks (0 – {{ submission.assignment.total_marks }})</label>
+                <input type="number" class="form-control" name="marks" min="0" max="{{ submission.assignment.total_marks }}"
+                       step="0.5" required value="{{ submission.marks if submission.marks is not none else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Feedback</label>
+                <textarea class="form-control" name="feedback" rows="3">{{ submission.feedback or '' }}</textarea>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Grade</button>
+            <a href="{{ url_for('admin.assignment_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

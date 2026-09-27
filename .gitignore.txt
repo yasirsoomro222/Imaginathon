@@ -1,0 +1,11 @@
+# Python / YOLO
+__pycache__/
+*.pyc
+*.pt
+*.weights
+
+# Node / LMS
+node_modules/
+.env
+npm-debug.log*
+.DS_Store

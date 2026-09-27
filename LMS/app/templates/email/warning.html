@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; padding: 24px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <div style="background: #dc3545; color: #fff; padding: 16px 24px;">
+      <h2 style="margin: 0; font-size: 18px;">⚠ University LMS — Warning Notice</h2>
+    </div>
+    <div style="padding: 24px;">
+      <p>Dear <strong>{{ warning.student.user.full_name }}</strong> ({{ warning.student.roll_no }}),</p>
+      <p>The university has issued the following warning on your record:</p>
+      <div style="background: #fff5f5; border-left: 4px solid #dc3545; padding: 12px 16px; margin: 16px 0;">
+        <strong>{{ warning.title }}</strong><br>
+        <span style="color: #555;">Type: {{ warning.type|capitalize }} · Severity: {{ warning.severity|capitalize }}</span>
+      </div>
+      <p style="white-space: pre-line; color: #333;">{{ warning.message }}</p>
+      {% if warning.related_challan %}
+      <p>Please clear your outstanding challan <strong>{{ warning.related_challan.challan_no }}</strong>
+         ({{ warning.related_challan.amount|money }}) before <strong>{{ warning.related_challan.due_date|datefmt }}</strong>.</p>
+      {% endif %}
+      <p style="font-size: 13px; color: #888;">This is an automated message from the University LMS. Please log in to your portal for details.</p>
+    </div>
+  </div>
+</body>
+</html>

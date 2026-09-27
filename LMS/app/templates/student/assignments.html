@@ -1,0 +1,53 @@
+{% extends "student/_layout.html" %}
+
+{% block page_title %}Assignments{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Assignments</h4>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Title</th>
+                    <th>Course</th>
+                    <th>Due Date</th>
+                    <th>Total Marks</th>
+                    <th>Status</th>
+                    <th>Obtained</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in items %}
+                {% set sub = submissions.get(a.id) %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('student.assignment_detail', assignment_id=a.id) }}" class="fw-semibold text-decoration-none">{{ a.title }}</a>
+                    </td>
+                    <td><span class="badge bg-primary">{{ a.course.code }}</span></td>
+                    <td>{{ a.due_date|datetimefmt }}</td>
+                    <td>{{ a.total_marks }}</td>
+                    <td>
+                        {% if sub and sub.is_graded %}
+                        <span class="badge bg-success">Graded</span>
+                        {% elif sub %}
+                        <span class="badge bg-info">Submitted</span>
+                        {% elif a.is_past_due %}
+                        <span class="badge bg-danger">Overdue</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if sub and sub.is_graded %}{{ sub.marks }}{% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-muted">No assignments posted yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

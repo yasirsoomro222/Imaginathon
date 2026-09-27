@@ -1,0 +1,43 @@
+{% extends "student/_layout.html" %}
+{% from "_macros.html" import challan_status_badge %}
+
+{% block page_title %}Fee Challans{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Fee Challans</h4>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Challan No</th>
+                    <th>Type</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in challans %}
+                <tr class="{% if c.is_overdue %}table-danger{% endif %}">
+                    <td class="fw-semibold">{{ c.challan_no }}</td>
+                    <td>{{ c.fee_type }}</td>
+                    <td>{{ c.issue_date|datefmt }}</td>
+                    <td>{{ c.due_date|datefmt }}</td>
+                    <td>{{ c.amount|money }}</td>
+                    <td>{{ challan_status_badge(c) }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('student.challan_detail', challan_id=c.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> View</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-muted">No challans issued.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{% block page_title %}Student Portal{% endblock %} — University LMS{% endblock %}
+
+{% block nav_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('student.courses') }}"><i class="bi bi-journals me-1"></i>Courses</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('student.assignments') }}"><i class="bi bi-file-earmark-text me-1"></i>Assignments</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('student.results') }}"><i class="bi bi-award me-1"></i>Results</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('student.challans') }}"><i class="bi bi-receipt me-1"></i>Challans</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <aside class="lms-sidebar d-none d-lg-block no-print">
+        <div class="p-3 text-white-50 small border-bottom border-secondary">
+            <div class="fw-semibold text-white">{{ current_user.student.roll_no }}</div>
+            <div>Semester {{ current_user.student.semester }}</div>
+        </div>
+        <nav class="nav flex-column py-2">
+            <a class="nav-link {% if request.endpoint == 'student.dashboard' %}active{% endif %}" href="{{ url_for('student.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+            <a class="nav-link {% if request.endpoint in ('student.courses', 'student.course_detail') %}active{% endif %}" href="{{ url_for('student.courses') }}"><i class="bi bi-journals me-2"></i>My Courses</a>
+            <a class="nav-link {% if request.endpoint == 'student.attendance' %}active{% endif %}" href="{{ url_for('student.attendance') }}"><i class="bi bi-calendar-check me-2"></i>Attendance</a>
+            <a class="nav-link {% if request.endpoint in ('student.assignments', 'student.assignment_detail') %}active{% endif %}" href="{{ url_for('student.assignments') }}"><i class="bi bi-file-earmark-text me-2"></i>Assignments</a>
+            <a class="nav-link {% if request.endpoint == 'student.results' %}active{% endif %}" href="{{ url_for('student.results') }}"><i class="bi bi-award me-2"></i>Results</a>
+            <a class="nav-link {% if request.endpoint in ('student.challans', 'student.challan_detail') %}active{% endif %}" href="{{ url_for('student.challans') }}"><i class="bi bi-receipt me-2"></i>Fee Challans</a>
+            <a class="nav-link {% if request.endpoint in ('student.warnings', 'student.warning_detail') %}active{% endif %}" href="{{ url_for('student.warnings') }}">
+                <i class="bi bi-exclamation-triangle me-2"></i>Warnings
+                {% if unread_warnings_count > 0 %}<span class="badge bg-danger ms-1">{{ unread_warnings_count }}</span>{% endif %}
+            </a>
+            <a class="nav-link {% if request.endpoint == 'student.announcements' %}active{% endif %}" href="{{ url_for('student.announcements') }}"><i class="bi bi-megaphone me-2"></i>Announcements</a>
+            <a class="nav-link {% if request.endpoint == 'student.profile' %}active{% endif %}" href="{{ url_for('student.profile') }}"><i class="bi bi-person me-2"></i>Profile</a>
+        </nav>
+    </aside>
+    <main class="flex-grow-1 p-4">
+        {% block page_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

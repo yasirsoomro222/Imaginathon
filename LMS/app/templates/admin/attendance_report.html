@@ -1,0 +1,43 @@
+{% extends "admin/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}Attendance Report — {{ course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Attendance Report — {{ course.code }}</h4>
+        <p class="text-muted mb-0">{{ course.title }} · {{ course.teacher }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.attendance_mark', course_id=course.id, date_str=today) }}" class="btn btn-outline-primary"><i class="bi bi-plus-lg me-1"></i>Mark Today</a>
+        <a href="{{ url_for('admin.attendance_select') }}" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Roll No</th><th>Name</th><th>Counted</th><th>Present</th><th>Absent</th><th>Percentage</th></tr>
+            </thead>
+            <tbody>
+                {% for e in enrollments %}
+                {% set counted = e.attendance_records | rejectattr('status', 'equalto', 'excused') | list %}
+                {% set present = counted | selectattr('status', 'in', ['present', 'late']) | list %}
+                <tr class="{% if e.is_below_threshold %}table-danger{% endif %}">
+                    <td class="fw-semibold">{{ e.student.roll_no }}</td>
+                    <td>{{ e.student.user.full_name }}</td>
+                    <td>{{ counted|length }}</td>
+                    <td>{{ present|length }}</td>
+                    <td>{{ counted|length - present|length }}</td>
+                    <td>{{ att_badge(e.attendance_percentage) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-muted">No students enrolled.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

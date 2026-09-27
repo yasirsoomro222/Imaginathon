@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{% block page_title %}Admin{% endblock %} — University LMS{% endblock %}
+
+{% block nav_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.departments') }}"><i class="bi bi-building me-1"></i>Departments</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.students') }}"><i class="bi bi-people me-1"></i>Students</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.teachers') }}"><i class="bi bi-person-badge me-1"></i>Teachers</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.courses') }}"><i class="bi bi-journals me-1"></i>Courses</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.attendance_select') }}"><i class="bi bi-calendar-check me-1"></i>Attendance</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.assignments') }}"><i class="bi bi-file-earmark-text me-1"></i>Assignments</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.challans') }}"><i class="bi bi-receipt me-1"></i>Challans</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.warnings') }}"><i class="bi bi-exclamation-triangle me-1"></i>Warnings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.announcements') }}"><i class="bi bi-megaphone me-1"></i>Announcements</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <aside class="lms-sidebar d-none d-lg-block no-print">
+        <div class="p-3 text-white-50 small border-bottom border-secondary">
+            <div class="fw-semibold text-white">Admin Panel</div>
+            <div>{{ current_user.full_name }}</div>
+        </div>
+        <nav class="nav flex-column py-2">
+            <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+            <a class="nav-link {% if request.endpoint == 'admin.departments' %}active{% endif %}" href="{{ url_for('admin.departments') }}"><i class="bi bi-building me-2"></i>Departments</a>
+            <a class="nav-link {% if request.endpoint in ('admin.students', 'admin.student_new', 'admin.student_edit', 'admin.student_detail') %}active{% endif %}" href="{{ url_for('admin.students') }}"><i class="bi bi-people me-2"></i>Students</a>
+            <a class="nav-link {% if request.endpoint in ('admin.teachers', 'admin.teacher_new', 'admin.teacher_edit', 'admin.teacher_detail', 'admin.teachers_export') %}active{% endif %}" href="{{ url_for('admin.teachers') }}"><i class="bi bi-person-badge me-2"></i>Teachers</a>
+            <a class="nav-link {% if request.endpoint in ('admin.courses', 'admin.course_new', 'admin.course_edit', 'admin.course_enroll', 'admin.assessments', 'admin.assessment_new') %}active{% endif %}" href="{{ url_for('admin.courses') }}"><i class="bi bi-journals me-2"></i>Courses</a>
+            <a class="nav-link {% if request.endpoint in ('admin.attendance_select', 'admin.attendance_mark', 'admin.attendance_report') %}active{% endif %}" href="{{ url_for('admin.attendance_select') }}"><i class="bi bi-calendar-check me-2"></i>Attendance</a>
+            <a class="nav-link {% if request.endpoint in ('admin.assignments', 'admin.assignment_form', 'admin.assignment_submissions', 'admin.submission_grade') %}active{% endif %}" href="{{ url_for('admin.assignments') }}"><i class="bi bi-file-earmark-text me-2"></i>Assignments</a>
+            <a class="nav-link {% if request.endpoint in ('admin.challans', 'admin.challan_new') %}active{% endif %}" href="{{ url_for('admin.challans') }}"><i class="bi bi-receipt me-2"></i>Fee Challans</a>
+            <a class="nav-link {% if request.endpoint in ('admin.warnings', 'admin.warning_new', 'admin.warnings_bulk_attendance') %}active{% endif %}" href="{{ url_for('admin.warnings') }}"><i class="bi bi-exclamation-triangle me-2"></i>Warnings</a>
+            <a class="nav-link {% if request.endpoint in ('admin.announcements', 'admin.announcement_form') %}active{% endif %}" href="{{ url_for('admin.announcements') }}"><i class="bi bi-megaphone me-2"></i>Announcements</a>
+        </nav>
+    </aside>
+    <main class="flex-grow-1 p-2 p-md-4">
+        {% block page_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

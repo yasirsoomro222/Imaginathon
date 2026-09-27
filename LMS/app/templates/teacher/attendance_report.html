@@ -1,0 +1,54 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Attendance Report — {{ course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ course.code }} — {{ course.title }}</h2>
+        <p class="text-muted mb-0">Attendance Report</p>
+    </div>
+    <a href="{{ url_for('teacher.attendance_select') }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if enrollments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>Attendance %</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    <tr>
+                        <td><strong>{{ e.student.roll_no }}</strong></td>
+                        <td>{{ e.student.user.full_name }}</td>
+                        <td>
+                            {% set pct = e.attendance_percentage %}
+                            {% if pct is none %}—{% else %}{{ pct }}%{% endif %}
+                        </td>
+                        <td>
+                            {% if pct is none %}
+                            <span class="badge bg-secondary">No Data</span>
+                            {% elif pct < 75 %}
+                            <span class="badge bg-danger">Below 75%</span>
+                            {% else %}
+                            <span class="badge bg-success">OK</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">No students enrolled.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

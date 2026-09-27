@@ -1,0 +1,78 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Welcome, {{ teacher.user.full_name }}</h2>
+    <span class="badge bg-primary">{{ teacher.department }} — Semester {{ teacher.semester }}</span>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small mb-1">My Courses</div>
+                <div class="display-5 fw-bold text-primary">{{ courses|length }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small mb-1">Total Students</div>
+                <div class="display-5 fw-bold text-success">{{ total_students }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="text-muted small mb-1">Ungraded Submissions</div>
+                <div class="display-5 fw-bold text-warning">{{ ungraded_submissions }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">My Courses</h5>
+        <a href="{{ url_for('teacher.courses') }}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        {% if courses %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Title</th>
+                        <th>Semester</th>
+                        <th>Students</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td><strong>{{ course.code }}</strong></td>
+                        <td>{{ course.title }}</td>
+                        <td>{{ course.semester }}</td>
+                        <td>{{ course.enrollments|length }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('teacher.course_detail', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-journals display-4"></i>
+            <p class="mt-2">No courses assigned yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

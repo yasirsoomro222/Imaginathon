@@ -1,0 +1,35 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}My Courses{% endblock %}
+
+{% block page_content %}
+<h2 class="mb-4">My Courses</h2>
+
+{% if courses %}
+<div class="row g-3">
+    {% for course in courses %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">{{ course.code }}</h5>
+                    <span class="badge bg-info">Sem {{ course.semester }}</span>
+                </div>
+                <p class="card-text text-muted small">{{ course.title }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="text-muted small"><i class="bi bi-people me-1"></i>{{ course.enrollments|length }} students</span>
+                    <a href="{{ url_for('teacher.course_detail', course_id=course.id) }}" class="btn btn-sm btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5 text-muted">
+        <i class="bi bi-journals display-4"></i>
+        <p class="mt-2">No courses assigned yet.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

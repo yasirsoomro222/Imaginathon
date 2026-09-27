@@ -1,0 +1,104 @@
+{% extends "admin/_layout.html" %}
+{% block page_title %}Teacher Details{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ teacher.user.full_name }}</h2>
+        <p class="text-muted mb-0">{{ teacher.employee_id }} — {{ teacher.department }} — Semester {{ teacher.semester }}</p>
+    </div>
+    <a href="{{ url_for('admin.teachers') }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width: 150px;">Email</th>
+                        <td>{{ teacher.user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th>
+                        <td>{{ teacher.phone or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            {% if teacher.user.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Joined</th>
+                        <td>{{ teacher.user.created_at|datetimefmt }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.teacher_edit', teacher_id=teacher.id) }}" class="btn btn-outline-primary">Edit Details</a>
+                    <form method="POST" action="{{ url_for('admin.teacher_toggle_active', teacher_id=teacher.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-secondary w-100">
+                            {% if teacher.user.is_active %}Deactivate{% else %}Activate{% endif %} Account
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.teacher_reset_password', teacher_id=teacher.id) }}" onsubmit="return confirm('Reset password to default?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-warning w-100">Reset Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Assigned Courses ({{ courses|length }})</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if courses %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Title</th>
+                        <th>Semester</th>
+                        <th>Students</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in courses %}
+                    <tr>
+                        <td><strong>{{ c.code }}</strong></td>
+                        <td>{{ c.title }}</td>
+                        <td>{{ c.semester }}</td>
+                        <td>{{ c.enrollments|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">No courses assigned yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

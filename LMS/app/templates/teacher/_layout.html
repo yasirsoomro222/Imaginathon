@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{% block page_title %}Teacher{% endblock %} — University LMS{% endblock %}
+
+{% block nav_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('teacher.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('teacher.courses') }}"><i class="bi bi-journals me-1"></i>My Courses</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('teacher.assignments') }}"><i class="bi bi-file-earmark-text me-1"></i>Assignments</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('teacher.attendance_select') }}"><i class="bi bi-calendar-check me-1"></i>Attendance</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <aside class="lms-sidebar d-none d-lg-block no-print">
+        <div class="p-3 text-white-50 small border-bottom border-secondary">
+            <div class="fw-semibold text-white">Teacher Panel</div>
+            <div>{{ current_user.full_name }}</div>
+        </div>
+        <nav class="nav flex-column py-2">
+            <a class="nav-link {% if request.endpoint == 'teacher.dashboard' %}active{% endif %}" href="{{ url_for('teacher.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+            <a class="nav-link {% if request.endpoint in ('teacher.courses', 'teacher.course_detail') %}active{% endif %}" href="{{ url_for('teacher.courses') }}"><i class="bi bi-journals me-2"></i>My Courses</a>
+            <a class="nav-link {% if request.endpoint in ('teacher.assignments', 'teacher.assignment_form', 'teacher.assignment_submissions', 'teacher.submission_grade') %}active{% endif %}" href="{{ url_for('teacher.assignments') }}"><i class="bi bi-file-earmark-text me-2"></i>Assignments</a>
+            <a class="nav-link {% if request.endpoint in ('teacher.attendance_select', 'teacher.attendance_mark', 'teacher.attendance_report') %}active{% endif %}" href="{{ url_for('teacher.attendance_select') }}"><i class="bi bi-calendar-check me-2"></i>Attendance</a>
+        </nav>
+    </aside>
+    <main class="flex-grow-1 p-2 p-md-4">
+        {% block page_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

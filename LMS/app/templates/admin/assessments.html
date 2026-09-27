@@ -1,0 +1,78 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Assessments — {{ course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Assessments — {{ course.code }}</h4>
+        <p class="text-muted mb-0">{{ course.title }} · {{ course.teacher }} · {{ course.enrollments|length }} students</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.assessment_new', course_id=course.id) }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Assessment</a>
+        <form method="post" action="{{ url_for('admin.finalize_results', course_id=course.id) }}"
+              onsubmit="return confirm('Finalize results for {{ course.code }}? Grades will be locked into GPA calculations.')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-success"><i class="bi bi-lock me-1"></i>Finalize Results</button>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Title</th><th>Type</th><th>Total Marks</th><th>Weightage</th><th>Marks Entered</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for a in course.assessments %}
+                <tr>
+                    <td class="fw-semibold">{{ a.title }}</td>
+                    <td><span class="badge bg-light text-dark">{{ a.type }}</span></td>
+                    <td>{{ a.total_marks }}</td>
+                    <td>{{ a.weightage|int }}%</td>
+                    <td><span class="badge bg-info">{{ a.marks|length }}</span> / {{ course.enrollments|length }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('admin.marks_entry', assessment_id=a.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i> Enter Marks
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-muted">No assessments defined for this course yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white fw-semibold"><i class="bi bi-award me-2"></i>Course Results</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Roll No</th><th>Student</th><th>Percentage</th><th>Grade</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for e in course.enrollments|sort(attribute='student.roll_no') %}
+                {% set r = e.result %}
+                <tr>
+                    <td class="fw-semibold">{{ e.student.roll_no }}</td>
+                    <td>{{ e.student.user.full_name }}</td>
+                    {% if r and r.is_finalized %}
+                    <td>{{ r.percentage }}%</td>
+                    <td><span class="badge {% if r.grade_letter == 'F' %}bg-danger{% elif r.grade_points >= 3.33 %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ r.grade_letter }}</span></td>
+                    <td><span class="badge bg-success">Finalized</span></td>
+                    {% else %}
+                    <td colspan="2" class="text-muted">—</td>
+                    <td><span class="badge bg-secondary">In Progress</span></td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-muted">No students enrolled.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

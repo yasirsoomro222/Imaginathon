@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; padding: 24px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <div style="background: #0d6efd; color: #fff; padding: 16px 24px;">
+      <h2 style="margin: 0; font-size: 18px;">🧾 University LMS — Fee Challan Issued</h2>
+    </div>
+    <div style="padding: 24px;">
+      <p>Dear <strong>{{ student.user.full_name }}</strong> ({{ student.roll_no }}),</p>
+      <p>A fee challan has been issued to you:</p>
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin: 16px 0;">
+        <tr><td style="border: 1px solid #e2e8f0; padding: 8px 12px; background: #f8fafc; width: 40%;"><strong>Challan No</strong></td><td style="border: 1px solid #e2e8f0; padding: 8px 12px;">{{ challan.challan_no }}</td></tr>
+        <tr><td style="border: 1px solid #e2e8f0; padding: 8px 12px; background: #f8fafc;"><strong>Fee Type</strong></td><td style="border: 1px solid #e2e8f0; padding: 8px 12px;">{{ challan.fee_type }}</td></tr>
+        <tr><td style="border: 1px solid #e2e8f0; padding: 8px 12px; background: #f8fafc;"><strong>Amount</strong></td><td style="border: 1px solid #e2e8f0; padding: 8px 12px;"><strong>{{ challan.amount|money }}</strong></td></tr>
+        <tr><td style="border: 1px solid #e2e8f0; padding: 8px 12px; background: #f8fafc;"><strong>Issue Date</strong></td><td style="border: 1px solid #e2e8f0; padding: 8px 12px;">{{ challan.issue_date|datefmt }}</td></tr>
+        <tr><td style="border: 1px solid #e2e8f0; padding: 8px 12px; background: #f8fafc;"><strong>Due Date</strong></td><td style="border: 1px solid #e2e8f0; padding: 8px 12px; color: #dc3545;"><strong>{{ challan.due_date|datefmt }}</strong></td></tr>
+      </table>
+      <p>Please log in to your LMS portal to view and print the challan form, and submit the fee at any designated bank branch before the due date.</p>
+      <p style="font-size: 13px; color: #888;">This is an automated message from the University LMS.</p>
+    </div>
+  </div>
+</body>
+</html>

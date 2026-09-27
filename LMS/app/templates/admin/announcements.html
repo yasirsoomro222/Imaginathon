@@ -1,0 +1,50 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Announcements{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Announcements</h4>
+    <a href="{{ url_for('admin.announcement_form') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Announcement</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Title</th><th>Pinned</th><th>Expires</th><th>Posted</th><th class="text-end">Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for a in announcements %}
+                <tr class="{% if a.is_expired %}opacity-50{% endif %}">
+                    <td>
+                        {% if a.is_pinned %}<i class="bi bi-pin-angle-fill text-warning me-1" title="Pinned"></i>{% endif %}
+                        <span class="fw-semibold">{{ a.title }}</span>
+                        {% if a.is_expired %}<span class="badge bg-secondary ms-1">Expired</span>{% endif %}
+                        <div class="small text-muted text-truncate" style="max-width: 480px;">{{ a.body }}</div>
+                    </td>
+                    <td>
+                        {% if a.is_pinned %}<span class="badge bg-warning text-dark">Pinned</span>
+                        {% else %}<span class="text-muted">—</span>{% endif %}
+                    </td>
+                    <td>{{ a.expires_on|datefmt if a.expires_on else '—' }}</td>
+                    <td class="small text-muted">{{ a.created_at|datetimefmt }}</td>
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{{ url_for('admin.announcement_form', announcement_id=a.id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <form method="post" action="{{ url_for('admin.announcement_delete', announcement_id=a.id) }}"
+                                  onsubmit="return confirm('Delete announcement &quot;{{ a.title }}&quot;?')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-muted">No announcements posted yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

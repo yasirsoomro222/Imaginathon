@@ -1,0 +1,64 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Attendance — {{ course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ course.code }} — {{ course.title }}</h2>
+        <p class="text-muted mb-0">Date: {{ att_date.strftime('%d %b %Y') }}</p>
+    </div>
+    <a href="{{ url_for('teacher.attendance_select') }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="POST">
+            <!-- Yeh line CSRF error ko fix karne ke liye add ki gayi hai -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Student Name</th>
+                            <th class="text-center">Present</th>
+                            <th class="text-center">Absent</th>
+                            <th class="text-center">Late</th>
+                            <th class="text-center">Excused</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in enrollments %}
+                        <tr>
+                            <td><strong>{{ e.student.roll_no }}</strong></td>
+                            <td>{{ e.student.user.full_name }}</td>
+                            {% set current = existing.get(e.id, '') %}
+                            <td class="text-center">
+                                <input type="radio" name="status_{{ e.id }}" value="present" {% if current == 'present' %}checked{% endif %} required>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" name="status_{{ e.id }}" value="absent" {% if current == 'absent' %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" name="status_{{ e.id }}" value="late" {% if current == 'late' %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" name="status_{{ e.id }}" value="excused" {% if current == 'excused' %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if enrollments %}
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Save Attendance</button>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">No students enrolled in this course.</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

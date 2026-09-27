@@ -1,0 +1,60 @@
+{% extends "admin/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}Bulk Attendance Warnings{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Bulk Attendance Warnings</h4>
+
+<div class="alert alert-info d-flex align-items-start">
+    <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+    <div>
+        Issues an attendance warning (and email) to every student whose attendance in any course is below the 75% threshold.
+        Severity is <strong>Critical</strong> below 65% and <strong>Warning</strong> between 65–74%.
+        This is a preview of the automated API your main project will call later.
+    </div>
+</div>
+
+{% if below %}
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-people me-1 text-danger"></i>{{ below|length }} enrollment(s) below 75%
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Student</th><th>Course</th><th>Attendance</th></tr>
+            </thead>
+            <tbody>
+                {% for e in below %}
+                <tr>
+                    <td>
+                        {{ e.student.roll_no }}
+                        <div class="small text-muted">{{ e.student.user.full_name }}</div>
+                    </td>
+                    <td>
+                        <span class="fw-semibold">{{ e.course.code }}</span>
+                        <div class="small text-muted">{{ e.course.title }}</div>
+                    </td>
+                    <td>{{ att_badge(e.attendance_percentage) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form method="post" onsubmit="return confirm('Issue {{ below|length }} attendance warning(s) and email the affected students?')">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-danger"><i class="bi bi-exclamation-triangle me-1"></i>Issue {{ below|length }} Warning(s) &amp; Email Students</button>
+    <a href="{{ url_for('admin.warnings') }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5 text-muted">
+        <i class="bi bi-check-circle display-5 d-block mb-3 text-success"></i>
+        No student is below the 75% attendance threshold. Nothing to warn about.
+    </div>
+</div>
+{% endif %}
+{% endblock %}

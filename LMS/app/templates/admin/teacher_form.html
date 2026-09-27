@@ -1,0 +1,65 @@
+{% extends "admin/_layout.html" %}
+{% block page_title %}{% if teacher %}Edit{% else %}Add{% endif %} Teacher{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% if teacher %}Edit{% else %}Add{% endif %} Teacher</h2>
+    <a href="{{ url_for('admin.teachers') }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ form.get('full_name', '') or (teacher.user.full_name if teacher else '') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ form.get('email', '') or (teacher.user.email if teacher else '') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" name="employee_id" class="form-control" value="{{ form.get('employee_id', '') or (teacher.employee_id if teacher else '') }}" required>
+                </div>
+                <div class="col-md-6">
+                    {% if not teacher %}
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" value="{{ form.get('password', '') }}" required>
+                    {% else %}
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" disabled placeholder="Use reset password option">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Department</label>
+                    <select name="department" class="form-select" required>
+                        <option value="">-- Select Department --</option>
+                        {% for d in departments %}
+                        <option value="{{ d }}" {% if (form.get('department', '') or (teacher.department if teacher else '')) == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Semester</label>
+                    <select name="semester" class="form-select" required>
+                        {% for s in range(1, 9) %}
+                        <option value="{{ s }}" {% if (form.get('semester', '1')|int or (teacher.semester if teacher else 1)) == s %}selected{% endif %}>Semester {{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone (optional)</label>
+                    <input type="text" name="phone" class="form-control" value="{{ form.get('phone', '') or (teacher.phone if teacher and teacher.phone else '') }}">
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">{% if teacher %}Update{% else %}Create{% endif %} Teacher</button>
+                <a href="{{ url_for('admin.teachers') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

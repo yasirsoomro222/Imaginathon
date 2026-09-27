@@ -1,0 +1,32 @@
+{% extends "student/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}My Courses{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">My Courses</h4>
+
+<div class="row g-3">
+    {% for e in enrollments %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title mb-1">{{ e.course.code }}</h5>
+                    <span class="badge bg-primary">{{ e.course.credit_hours }} CH</span>
+                </div>
+                <h6 class="card-subtitle text-muted mb-2 fs-6">{{ e.course.title }}</h6>
+                <p class="small mb-2"><i class="bi bi-person me-1"></i>{{ e.course.teacher }}</p>
+                <p class="small mb-2"><i class="bi bi-calendar3 me-1"></i>Semester {{ e.course.semester }}</p>
+                <div class="mb-3">{{ att_badge(e.attendance_percentage) }}</div>
+                <a href="{{ url_for('student.course_detail', course_id=e.course_id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">You are not enrolled in any course yet.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

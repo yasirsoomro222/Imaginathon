@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Login — University LMS{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid px-3">
+        <span class="navbar-brand fw-semibold"><i class="bi bi-mortarboard-fill me-1"></i>University LMS</span>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 120px);">
+    <div class="card shadow-sm" style="width: 100%; max-width: 420px;">
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <i class="bi bi-mortarboard-fill text-primary" style="font-size: 3rem;"></i>
+                <h4 class="mt-2 mb-0">University LMS</h4>
+                <p class="text-muted mb-0">Learning Management System</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger py-2">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required autofocus
+                           value="{{ request.form.get('email', '') }}">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-1"></i>Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

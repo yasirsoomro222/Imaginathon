@@ -1,0 +1,45 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}New Assessment{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>New Assessment — {{ course.code }}</h2>
+    <a href="{{ url_for('teacher.assessments', course_id=course.id) }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Type</label>
+                    <select name="type" class="form-select" required>
+                        <option value="quiz">Quiz</option>
+                        <option value="midterm">Midterm</option>
+                        <option value="final">Final</option>
+                        <option value="project">Project</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Total Marks</label>
+                    <input type="number" name="total_marks" class="form-control" min="1" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Weightage (%)</label>
+                    <input type="number" name="weightage" class="form-control" min="0" max="100" step="0.1" required>
+                    <small class="text-muted">Percentage contribution to final grade</small>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Create Assessment</button>
+                <a href="{{ url_for('teacher.assessments', course_id=course.id) }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

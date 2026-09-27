@@ -1,0 +1,42 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}{{ 'Edit Announcement' if announcement else 'New Announcement' }}{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">{{ 'Edit Announcement' if announcement else 'New Announcement' }}</h4>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label class="form-label">Title <span class="text-danger">*</span></label>
+                <input class="form-control" name="title" maxlength="200" required
+                       value="{{ announcement.title if announcement else '' }}" placeholder="Midterm exams schedule — Fall 2026">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Body <span class="text-danger">*</span></label>
+                <textarea class="form-control" name="body" rows="6" required
+                          placeholder="Midterm exams will be held from…">{{ announcement.body if announcement else '' }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Expires On (optional)</label>
+                    <input type="date" class="form-control" name="expires_on"
+                           value="{{ announcement.expires_on.isoformat() if announcement and announcement.expires_on else '' }}">
+                    <div class="form-text">After this date the announcement is hidden from students.</div>
+                </div>
+                <div class="col-md-6 mb-3 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_pinned" id="isPinned"
+                               {% if announcement and announcement.is_pinned %}checked{% endif %}>
+                        <label class="form-check-label" for="isPinned">Pin to top of student announcements</label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Announcement</button>
+            <a href="{{ url_for('admin.announcements') }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

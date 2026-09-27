@@ -1,0 +1,40 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Grade Submission{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">Grade Submission</h2>
+        <p class="text-muted mb-0">{{ submission.assignment.title }} — {{ submission.student.user.full_name }} ({{ submission.student.roll_no }})</p>
+    </div>
+    <a href="{{ url_for('teacher.assignment_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="mb-4">
+            <h6>Submission Details</h6>
+            <p class="mb-1"><strong>File:</strong> {{ submission.original_filename }}</p>
+            <p class="mb-0"><strong>Submitted:</strong> {{ submission.submitted_at|datetimefmt }}</p>
+        </div>
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Marks (out of {{ submission.assignment.total_marks }})</label>
+                    <input type="number" name="marks" class="form-control" min="0" max="{{ submission.assignment.total_marks }}" step="0.5" value="{{ submission.marks if submission.marks is not none else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Feedback (optional)</label>
+                    <textarea name="feedback" class="form-control" rows="4">{{ submission.feedback or '' }}</textarea>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Save Grade</button>
+                <a href="{{ url_for('teacher.assignment_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

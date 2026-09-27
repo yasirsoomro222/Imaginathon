@@ -1,0 +1,56 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}{{ 'Edit Course' if course else 'Add Course' }}{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">{{ 'Edit Course — ' + course.code if course else 'Add New Course' }}</h4>
+
+<div class="card border-0 shadow-sm" style="max-width: 640px;">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Department <span class="text-danger">*</span></label>
+                    <select class="form-select" name="department" required>
+                        {% for d in departments %}
+                        <option value="{{ d }}" {% if course and course.department == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Semester</label>
+                    <input type="number" class="form-control" name="semester" min="1" max="8"
+                           value="{{ course.semester if course else 1 }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Credit Hours</label>
+                    <input type="number" class="form-control" name="credit_hours" min="1" max="6"
+                           value="{{ course.credit_hours if course else 3 }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Code <span class="text-danger">*</span></label>
+                    <input class="form-control" name="code" required placeholder="CS-301"
+                           value="{{ course.code if course else '' }}">
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                    <input class="form-control" name="title" required placeholder="Data Structures"
+                           value="{{ course.title if course else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Teacher <span class="text-danger">*</span></label>
+                    <select class="form-select" name="teacher_id" required>
+                        <option value="">-- Select Teacher --</option>
+                        {% for t in teachers %}
+                        <option value="{{ t.id }}" {% if course and course.teacher_id == t.id %}selected{% endif %}>{{ t.user.full_name }} ({{ t.employee_id }}) — {{ t.department }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{{ 'Save Changes' if course else 'Create Course' }}</button>
+            <a href="{{ url_for('admin.courses') }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

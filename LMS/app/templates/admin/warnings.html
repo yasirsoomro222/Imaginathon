@@ -1,0 +1,87 @@
+{% extends "admin/_layout.html" %}
+{% from "_macros.html" import warning_severity_badge %}
+
+{% block page_title %}Warnings{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Warnings</h4>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.warnings_bulk_attendance') }}" class="btn btn-outline-danger">
+            <i class="bi bi-people me-1"></i>Bulk Attendance Warnings
+        </a>
+        <a href="{{ url_for('admin.warning_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Issue Warning</a>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3" style="max-width: 400px;">
+    <div class="col-auto">
+        <select class="form-select" name="type" onchange="this.form.submit()">
+            <option value="" {% if not wtype %}selected{% endif %}>All types</option>
+            <option value="attendance" {% if wtype == 'attendance' %}selected{% endif %}>Attendance</option>
+            <option value="fee" {% if wtype == 'fee' %}selected{% endif %}>Fee</option>
+            <option value="disciplinary" {% if wtype == 'disciplinary' %}selected{% endif %}>Disciplinary</option>
+        </select>
+    </div>
+</form>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Student</th><th>Type</th><th>Severity</th><th>Title</th><th>Source</th><th>Status</th><th>Issued</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for w in pagination.items %}
+                <tr>
+                    <td>
+                        {{ w.student.roll_no }}
+                        <div class="small text-muted">{{ w.student.user.full_name }}</div>
+                    </td>
+                    <td>
+                        {% if w.type == 'attendance' %}<span class="badge text-bg-light"><i class="bi bi-calendar-check me-1"></i>Attendance</span>
+                        {% elif w.type == 'fee' %}<span class="badge text-bg-light"><i class="bi bi-cash-coin me-1"></i>Fee</span>
+                        {% else %}<span class="badge text-bg-light"><i class="bi bi-shield-exclamation me-1"></i>Disciplinary</span>{% endif %}
+                    </td>
+                    <td>{{ warning_severity_badge(w) }}</td>
+                    <td class="fw-semibold">{{ w.title }}</td>
+                    <td><span class="badge text-bg-light">{{ w.source|capitalize }}</span></td>
+                    <td>
+                        {% if w.is_read %}<span class="badge bg-success">Read</span>
+                        {% else %}<span class="badge bg-danger">Unread</span>{% endif %}
+                    </td>
+                    <td class="small text-muted">{{ w.created_at|datetimefmt }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.student_detail', student_id=w.student.id) }}" class="btn btn-sm btn-outline-secondary" title="Student detail"><i class="bi bi-person"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="text-muted">No warnings issued yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if pagination.pages > 1 %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm">
+        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('admin.warnings', page=pagination.prev_num, type=wtype) }}">Previous</a>
+        </li>
+        {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+            {% if p %}
+            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('admin.warnings', page=p, type=wtype) }}">{{ p }}</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('admin.warnings', page=pagination.next_num, type=wtype) }}">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

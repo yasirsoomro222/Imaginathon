@@ -1,0 +1,56 @@
+{% extends "teacher/_layout.html" %}
+{% block page_title %}Assignments{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Assignments</h2>
+    <a href="{{ url_for('teacher.assignment_form') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Assignment</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if assignments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Course</th>
+                        <th>Due Date</th>
+                        <th>Total Marks</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in assignments %}
+                    <tr>
+                        <td><strong>{{ a.title }}</strong></td>
+                        <td>{{ a.course.code }}</td>
+                        <td>{{ a.due_date|datetimefmt }}</td>
+                        <td>{{ a.total_marks }}</td>
+                        <td>
+                            {% if a.is_past_due %}
+                            <span class="badge bg-secondary">Past Due</span>
+                            {% else %}
+                            <span class="badge bg-success">Active</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ url_for('teacher.assignment_submissions', assignment_id=a.id) }}" class="btn btn-sm btn-outline-primary">Submissions</a>
+                            <a href="{{ url_for('teacher.assignment_form', assignment_id=a.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-file-earmark-text display-4"></i>
+            <p class="mt-2">No assignments yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

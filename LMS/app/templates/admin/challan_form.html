@@ -1,0 +1,67 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Issue Challan{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Issue Fee Challan</h4>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Fee Type <span class="text-danger">*</span></label>
+                    <select class="form-select" name="fee_type" required>
+                        {% for t in fee_types %}
+                        <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Amount (Rs.) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" name="amount" min="1" step="0.01" required placeholder="45000">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Due Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="due_date" required value="{{ default_due }}">
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Description (optional)</label>
+                    <input class="form-control" name="description" placeholder="Fall 2026 semester tuition fee">
+                </div>
+                <div class="col-12 mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <label class="form-label mb-0">Select Student(s) <span class="text-danger">*</span></label>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleAll(this)">
+                            <label class="form-check-label small" for="selectAll">Select all (bulk)</label>
+                        </div>
+                    </div>
+                    <div class="border rounded p-2" style="max-height: 320px; overflow-y: auto;">
+                        {% for s in students %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="student_ids" value="{{ s.id }}" id="cs{{ s.id }}"
+                                   {% if selected_id and s.id == selected_id %}checked{% endif %}>
+                            <label class="form-check-label" for="cs{{ s.id }}">
+                                <span class="fw-semibold">{{ s.roll_no }}</span>
+                                <span class="text-muted small">· {{ s.user.full_name }} · Semester {{ s.semester }}</span>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-text">Each selected student gets an individual challan with a unique challan number and an email notification.</div>
+                </div>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-send me-1"></i>Issue Challan(s) &amp; Notify</button>
+            <a href="{{ url_for('admin.challans') }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleAll(source) {
+        document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = source.checked);
+    }
+</script>
+{% endblock %}

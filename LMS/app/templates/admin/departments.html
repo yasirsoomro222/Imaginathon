@@ -1,0 +1,45 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Departments{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">Departments</h4>
+
+<div class="row g-3">
+    {% for d in dept_data %}
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-building me-2"></i>{{ d.name }}</span>
+                <div>
+                    <span class="badge bg-primary">{{ d.students }} Students</span>
+                    <span class="badge bg-success">{{ d.courses }} Courses</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr><th>Semester</th><th>Students</th><th>Courses</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            {% for sem in range(1, 9) %}
+                            <tr>
+                                <td class="fw-semibold">Semester {{ sem }}</td>
+                                <td>{{ d.semesters[sem].students }}</td>
+                                <td>{{ d.semesters[sem].courses }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('admin.students', dept=d.name) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-people"></i></a>
+                                    <a href="{{ url_for('admin.courses', dept=d.name, sem=sem) }}" class="btn btn-sm btn-outline-success"><i class="bi bi-journals"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

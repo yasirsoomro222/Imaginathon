@@ -1,0 +1,101 @@
+:root {
+    --lms-sidebar-width: 240px;
+}
+
+body {
+    background-color: #f5f7fa;
+}
+
+.lms-sidebar {
+    width: var(--lms-sidebar-width);
+    min-height: calc(100vh - 56px);
+    background: #1e293b;
+}
+
+.lms-sidebar .nav-link {
+    color: #cbd5e1;
+    border-radius: 6px;
+    margin: 2px 8px;
+    padding: 8px 14px;
+}
+
+.lms-sidebar .nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.lms-sidebar .nav-link.active {
+    color: #fff;
+    background: #2563eb;
+}
+
+.lms-sidebar .nav-link i {
+    width: 22px;
+}
+
+.stat-card {
+    transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.att-badge {
+    font-size: 0.95rem;
+    min-width: 76px;
+}
+
+.challan-copy {
+    border: 1px solid #64748b;
+    page-break-inside: avoid;
+}
+
+.challan-copy .copy-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: 3px;
+    font-size: 0.7rem;
+    color: #64748b;
+    border-left: 1px dashed #64748b;
+    padding: 8px 4px;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+    }
+
+    .challan-copy {
+        border: 1px solid #000;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .stat-card .fs-3 {
+        font-size: 1.1rem !important;
+    }
+
+    .stat-card i.fs-3 {
+        font-size: 1.3rem !important;
+    }
+
+    .stat-card .small {
+        font-size: 0.7rem;
+    }
+
+    .card-header .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .card-header .float-end {
+        margin-top: 0.25rem;
+    }
+}

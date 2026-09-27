@@ -1,0 +1,47 @@
+{% extends "student/_layout.html" %}
+{% from "_macros.html" import warning_severity_badge %}
+
+{% block page_title %}Warning Detail{% endblock %}
+
+{% block page_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm {% if warning.severity == 'critical' %}border-start border-4 border-danger{% endif %}">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">{{ warning.title }}</span>
+                {{ warning_severity_badge(warning) }}
+            </div>
+            <div class="card-body">
+                <div class="small text-muted mb-3">
+                    <span class="badge bg-light text-dark me-1">{{ warning.type|capitalize }}</span>
+                    Issued {{ warning.created_at|datetimefmt }} · Source: {{ warning.source|capitalize }}
+                    {% if warning.is_read %} · Read {{ warning.read_at|datetimefmt }}{% endif %}
+                </div>
+                <p style="white-space: pre-line;">{{ warning.message }}</p>
+
+                {% if warning.image_filename %}
+                <div class="mt-3">
+                    <label class="form-label small text-muted mb-1"><i class="bi bi-camera me-1"></i>Detection Evidence</label>
+                    <div class="border rounded p-2">
+                        <img src="{{ url_for('static', filename='detection_images/' + warning.image_filename) }}"
+                             class="img-fluid rounded" style="max-height: 400px;" alt="Detection snapshot">
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if warning.related_challan %}
+                <div class="alert alert-warning py-2 small">
+                    <i class="bi bi-receipt me-1"></i>Related challan:
+                    <a href="{{ url_for('student.challan_detail', challan_id=warning.related_challan_id) }}">
+                        {{ warning.related_challan.challan_no }} ({{ warning.related_challan.amount|money }})
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white">
+                <a href="{{ url_for('student.warnings') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Warnings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

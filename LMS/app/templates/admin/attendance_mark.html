@@ -1,0 +1,65 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}Attendance — {{ course.code }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Attendance — {{ course.code }}</h4>
+        <p class="text-muted mb-0">{{ course.title }} · {{ att_date|datefmt }}</p>
+    </div>
+    <a href="{{ url_for('admin.attendance_select') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Change Course / Date</a>
+</div>
+
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold"><i class="bi bi-people me-2"></i>{{ enrollments|length }} students</span>
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-outline-success" onclick="setAll('present')">All Present</button>
+                <button type="button" class="btn btn-outline-danger" onclick="setAll('absent')">All Absent</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr><th>Roll No</th><th>Name</th><th style="width: 55%;">Status</th></tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    <tr>
+                        <td class="fw-semibold">{{ e.student.roll_no }}</td>
+                        <td>{{ e.student.user.full_name }}</td>
+                        <td>
+                            <div class="btn-group flex-wrap" role="group">
+                                {% for s in statuses %}
+                                <input type="radio" class="btn-check" name="status_{{ e.id }}" id="st{{ e.id }}{{ s }}"
+                                       value="{{ s }}" autocomplete="off"
+                                       {% if existing.get(e.id, 'present') == s %}checked{% endif %}>
+                                <label class="btn btn-sm btn-outline-{% if s == 'present' %}success{% elif s == 'absent' %}danger{% elif s == 'late' %}warning{% else %}secondary{% endif %}"
+                                       for="st{{ e.id }}{{ s }}">{{ s|capitalize }}</label>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" class="text-muted">No students enrolled in this course.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if enrollments %}
+        <div class="card-footer bg-white">
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Attendance</button>
+        </div>
+        {% endif %}
+    </div>
+</form>
+
+<script>
+    function setAll(status) {
+        document.querySelectorAll('input[type="radio"][value="' + status + '"]').forEach(r => r.checked = true);
+    }
+</script>
+{% endblock %}

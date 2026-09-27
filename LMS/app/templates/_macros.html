@@ -1,0 +1,43 @@
+{% macro att_badge(pct) %}
+{% if pct is none %}
+<span class="badge att-badge bg-secondary">No records</span>
+{% elif pct < 75 %}
+<span class="badge att-badge bg-danger" title="Below 75% — debarment risk">{{ pct }}% — Below 75%</span>
+{% elif pct < 80 %}
+<span class="badge att-badge bg-warning text-dark" title="Borderline">{{ pct }}%</span>
+{% else %}
+<span class="badge att-badge bg-success">{{ pct }}%</span>
+{% endif %}
+{% endmacro %}
+
+{% macro challan_status_badge(challan) %}
+{% if challan.display_status == 'Paid' %}
+<span class="badge bg-success">Paid</span>
+{% elif challan.display_status == 'Overdue' %}
+<span class="badge bg-danger">Overdue</span>
+{% elif challan.display_status == 'Cancelled' %}
+<span class="badge bg-secondary">Cancelled</span>
+{% else %}
+<span class="badge bg-warning text-dark">Unpaid</span>
+{% endif %}
+{% endmacro %}
+
+{% macro warning_severity_badge(warning) %}
+{% if warning.severity == 'critical' %}
+<span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i>Critical</span>
+{% elif warning.severity == 'warning' %}
+<span class="badge bg-warning text-dark">Warning</span>
+{% else %}
+<span class="badge bg-info">Info</span>
+{% endif %}
+{% endmacro %}
+
+{% macro grade_badge(result) %}
+{% if result.grade_letter == 'F' %}
+<span class="badge bg-danger">{{ result.grade_letter }}</span>
+{% elif result.grade_points >= 3.33 %}
+<span class="badge bg-success">{{ result.grade_letter }}</span>
+{% else %}
+<span class="badge bg-warning text-dark">{{ result.grade_letter }}</span>
+{% endif %}
+{% endmacro %}

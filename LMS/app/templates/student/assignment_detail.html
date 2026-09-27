@@ -1,0 +1,80 @@
+{% extends "student/_layout.html" %}
+
+{% block page_title %}{{ assignment.title }}{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ assignment.title }}</h4>
+        <p class="text-muted mb-0">
+            <span class="badge bg-primary">{{ assignment.course.code }}</span> {{ assignment.course.title }}
+        </p>
+    </div>
+    {% if submission and submission.is_graded %}
+    <span class="badge bg-success fs-6">Graded: {{ submission.marks }} / {{ assignment.total_marks }}</span>
+    {% elif submission %}
+    <span class="badge bg-info fs-6">Submitted</span>
+    {% elif assignment.is_past_due %}
+    <span class="badge bg-danger fs-6">Overdue</span>
+    {% else %}
+    <span class="badge bg-warning text-dark fs-6">Pending</span>
+    {% endif %}
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-file-text me-2"></i>Description</div>
+            <div class="card-body">
+                <p class="mb-2">{{ assignment.description or "No description provided." }}</p>
+                <hr>
+                <div class="row small">
+                    <div class="col-6"><strong>Due Date:</strong> {{ assignment.due_date|datetimefmt }}</div>
+                    <div class="col-6"><strong>Total Marks:</strong> {{ assignment.total_marks }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-cloud-arrow-up me-2"></i>Submission</div>
+            <div class="card-body">
+                {% if submission %}
+                <p class="mb-2">
+                    <i class="bi bi-file-earmark me-1"></i>
+                    <a href="{{ url_for('student.download_submission', submission_id=submission.id) }}">{{ submission.original_filename }}</a>
+                    <span class="text-muted small">· Submitted {{ submission.submitted_at|datetimefmt }}</span>
+                </p>
+                {% if submission.is_graded %}
+                <div class="alert alert-success py-2 mb-2">
+                    <strong>Marks:</strong> {{ submission.marks }} / {{ assignment.total_marks }}
+                </div>
+                {% if submission.feedback %}
+                <div class="alert alert-light border py-2 mb-2">
+                    <strong>Feedback:</strong> {{ submission.feedback }}
+                </div>
+                {% endif %}
+                {% endif %}
+                {% if not assignment.is_past_due %}
+                <hr>
+                <p class="small text-muted mb-2">Re-upload before the deadline to replace your submission:</p>
+                {% endif %}
+                {% else %}
+                <p class="text-muted small mb-2">No submission yet. Allowed: pdf, doc, docx, zip, png, jpg, jpeg, txt (max 16 MB).</p>
+                {% endif %}
+
+                {% if not assignment.is_past_due %}
+                <form method="post" action="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="file" required>
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-upload me-1"></i>{{ 'Replace' if submission else 'Submit' }}</button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="alert alert-warning py-2 mb-0 small">The deadline for this assignment has passed.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

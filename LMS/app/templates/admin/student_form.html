@@ -1,0 +1,61 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %}{{ 'Edit Student' if student else 'Add Student' }}{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-4">{{ 'Edit Student — ' + student.roll_no if student else 'Add New Student' }}</h4>
+
+<div class="card border-0 shadow-sm" style="max-width: 760px;">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                    <input class="form-control" name="full_name" required
+                           value="{{ form.get('full_name', student.user.full_name if student else '') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" name="email" required
+                           value="{{ form.get('email', student.user.email if student else '') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Roll No <span class="text-danger">*</span></label>
+                    <input class="form-control" name="roll_no" required placeholder="fa23-bcs-001"
+                           value="{{ form.get('roll_no', student.roll_no if student else '') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    {% if not student %}
+                    <label class="form-label">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" name="password" required minlength="6" value="{{ form.get('password', '') }}">
+                    {% else %}
+                    <label class="form-label">Password</label>
+                    <input class="form-control" value="(use Reset Password action)" disabled>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Department</label>
+                    <select class="form-select" name="program">
+                        {% for d in departments %}
+                        <option value="{{ d }}" {% if form.get('program', student.program if student else 'BS CS') == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Semester</label>
+                    <input type="number" class="form-control" name="semester" min="1" max="8"
+                           value="{{ form.get('semester', student.semester if student else 1) }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Phone</label>
+                    <input class="form-control" name="phone" placeholder="03xx-xxxxxxx"
+                           value="{{ form.get('phone', student.phone or '' if student else '') }}">
+                </div>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{{ 'Save Changes' if student else 'Create Student' }}</button>
+            <a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

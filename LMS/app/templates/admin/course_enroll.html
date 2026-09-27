@@ -1,0 +1,89 @@
+{% extends "admin/_layout.html" %}
+{% from "_macros.html" import att_badge %}
+
+{% block page_title %}{{ course.code }} Enrollment{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ course.code }} — {{ course.title }}</h4>
+        <p class="text-muted mb-0">{{ course.teacher }} · {{ course.credit_hours }} CH · Semester {{ course.semester }}</p>
+    </div>
+    <div class="text-end">
+        <div class="fs-4 fw-bold">{{ course.enrollments|length }}</div>
+        <div class="text-muted small">enrolled</div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-people-fill me-2"></i>Enrolled Students</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light"><tr><th>Roll No</th><th>Name</th><th>Attendance</th><th></th></tr></thead>
+                    <tbody>
+                        {% for e in course.enrollments|sort(attribute='student.roll_no') %}
+                        <tr>
+                            <td class="fw-semibold">{{ e.student.roll_no }}</td>
+                            <td>{{ e.student.user.full_name }}</td>
+                            <td>{{ att_badge(e.attendance_percentage) }}</td>
+                            <td class="text-end">
+                                <form method="post" action="{{ url_for('admin.course_unenroll', course_id=course.id, enrollment_id=e.id) }}"
+                                      onsubmit="return confirm('Unenroll {{ e.student.roll_no }} from {{ course.code }}? Attendance and results will be removed.')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-person-dash"></i> Unenroll</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-muted">No students enrolled.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-person-plus me-2"></i>Enroll Students</div>
+            <div class="card-body">
+                {% if available %}
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted">Select students to enroll</span>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleAll(this)">
+                                <label class="form-check-label small" for="selectAll">Select all</label>
+                            </div>
+                        </div>
+                        <div style="max-height: 360px; overflow-y: auto;" class="border rounded p-2">
+                            {% for s in available %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="student_ids" value="{{ s.id }}" id="st{{ s.id }}">
+                                <label class="form-check-label" for="st{{ s.id }}">
+                                    <span class="fw-semibold">{{ s.roll_no }}</span>
+                                    <span class="text-muted small">· {{ s.user.full_name }}</span>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100"><i class="bi bi-person-plus me-1"></i>Enroll Selected</button>
+                </form>
+                <script>
+                    function toggleAll(source) {
+                        document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = source.checked);
+                    }
+                </script>
+                {% else %}
+                <div class="alert alert-info mb-0">All active students are already enrolled in this course.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
