@@ -9,3 +9,4 @@ node_modules/
 .env
 npm-debug.log*
 .DS_Store
+COGNITIVE VISION AI/AI Engine/Datasets/id_card/
